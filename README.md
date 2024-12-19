@@ -1,5 +1,5 @@
 # ajax example fetch api
-Site url: https://samayun.github.io/ajax
+Site url: https://samayun.github.io/ajax/
 
 
 This project demonstrates a basic **User Management System** using vanilla JavaScript, HTML, and CSS. It allows you to perform CRUD operations (Create, Read, Update, Delete) dynamically and fetch mock data from an API.
