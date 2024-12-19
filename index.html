@@ -68,19 +68,17 @@
     document.getElementById('fetchButton').addEventListener('click', fetchData);
 
     function fetchData() {
-      const url = 'https://jsonplaceholder.typicode.com/users'; // Mock public API URL
-
-      // Make an AJAX request using Fetch API
+      const url = 'https://jsonplaceholder.typicode.com/users';
       fetch(url)
         .then(response => {
           if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
           }
-          return response.json(); // Parse JSON response
+          return response.json();
         })
         .then(data => {
-          displayData(data); // Call function to display data
-          document.getElementById('error').textContent = ''; // Clear error messages
+          displayData(data);
+          document.getElementById('error').textContent = '';
         })
         .catch(error => {
           document.getElementById('error').textContent = `Failed to fetch data: ${error.message}`;
@@ -102,7 +100,7 @@
         tableBody.appendChild(row);
       });
 
-      document.getElementById('dataTable').style.display = 'table'; // Show the table
+      document.getElementById('dataTable').style.display = 'table';
     }
   </script>
 
