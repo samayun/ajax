@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AJAX Data Fetch Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .data-table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    .data-table th {
+      background-color: #007BFF;
+      color: white;
+    }
+    .error {
+      color: red;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Fetch and Display Data</h1>
+  <button id="fetchButton">Fetch User Data</button>
+  
+  <table id="dataTable" class="data-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+    <tbody id="dataBody"></tbody>
+  </table>
+
+  <div id="error" class="error"></div>
+
+  <script>
+    // Button click event listener
+    document.getElementById('fetchButton').addEventListener('click', fetchData);
+
+    // Function to fetch data
+    function fetchData() {
+      const url = 'https://jsonplaceholder.typicode.com/users'; // Mock API URL
+
+      fetch(url)
+        .then(response => {
+          // Check if response is OK
+          if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+          }
+          return response.json(); // Parse JSON response
+        })
+        .then(data => {
+          displayData(data); // Call function to display data
+          document.getElementById('error').textContent = ''; // Clear any errors
+        })
+        .catch(error => {
+          document.getElementById('error').textContent = 'Error fetching data: ' + error.message;
+        });
+    }
+
+    // Function to display data in a table
+    function displayData(data) {
+      const tableBody = document.getElementById('dataBody');
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      data.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.phone}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      document.getElementById('dataTable').style.display = 'table'; // Show table
+    }
+  </script>
+
+</body>
+</html>
