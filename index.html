@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User Management </title>
+  <title>User Management</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,8 +13,8 @@
       text-align: center;
     }
     button {
-      display: block;
-      margin: 20px auto;
+      display: inline-block;
+      margin: 10px auto;
       padding: 10px 20px;
       font-size: 16px;
       color: #fff;
@@ -40,17 +40,48 @@
       background-color: #007BFF;
       color: white;
     }
+    .actions button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+    .actions .delete {
+      background-color: #dc3545;
+    }
+    .actions .edit {
+      background-color: #ffc107;
+    }
+    .actions button:hover {
+      opacity: 0.8;
+    }
     .error {
       color: red;
       text-align: center;
       margin-top: 20px;
     }
+    form {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    input[type="text"], input[type="email"], input[type="tel"] {
+      margin-right: 10px;
+      padding: 8px;
+      font-size: 14px;
+      width: 200px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Ajax Example - Fetch API</h1>
-  <button id="fetchButton">Show Users</button>
+  <h1>User Management with CRUD</h1>
+  <button id="fetchButton">Load Mock Users</button>
+  <form id="userForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="tel" id="phone" placeholder="Phone" required>
+    <button type="submit" id="addButton">Add User</button>
+  </form>
   <div id="error" class="error"></div>
   <table id="dataTable" style="display:none;">
     <thead>
@@ -59,25 +90,29 @@
         <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="dataBody"></tbody>
   </table>
 
   <script>
+    let users = [];
+    let editIndex = -1;
+
     document.getElementById('fetchButton').addEventListener('click', fetchData);
+    document.getElementById('userForm').addEventListener('submit', handleFormSubmit);
 
     function fetchData() {
       const url = 'https://jsonplaceholder.typicode.com/users';
       fetch(url)
         .then(response => {
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-          }
+          if (!response.ok) throw new Error(`Error: ${response.status}`);
           return response.json();
         })
         .then(data => {
-          displayData(data);
+          users = data.slice(0, 5);
+          displayData(users);
           document.getElementById('error').textContent = '';
         })
         .catch(error => {
@@ -85,21 +120,57 @@
         });
     }
 
-    function displayData(data) {
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if (editIndex === -1) {
+        const newUser = { id: users.length + 1, name, email, phone };
+        users.push(newUser);
+      } else {
+        users[editIndex].name = name;
+        users[editIndex].email = email;
+        users[editIndex].phone = phone;
+        editIndex = -1;
+        document.getElementById('addButton').textContent = 'Add User';
+      }
+      document.getElementById('userForm').reset();
+      displayData(users);
+    }
+
+    function displayData(users) {
       const tableBody = document.getElementById('dataBody');
       tableBody.innerHTML = '';
-      data.forEach(user => {
+      users.forEach((user, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${user.id}</td>
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.phone}</td>
+          <td class="actions">
+            <button class="edit" onclick="editUser(${index})">Edit</button>
+            <button class="delete" onclick="deleteUser(${index})">Delete</button>
+          </td>
         `;
         tableBody.appendChild(row);
       });
-
       document.getElementById('dataTable').style.display = 'table';
+    }
+
+    function editUser(index) {
+      const user = users[index];
+      document.getElementById('name').value = user.name;
+      document.getElementById('email').value = user.email;
+      document.getElementById('phone').value = user.phone;
+      editIndex = index;
+      document.getElementById('addButton').textContent = 'Update User';
+    }
+
+    function deleteUser(index) {
+      users.splice(index, 1);
+      displayData(users);
     }
   </script>
 
