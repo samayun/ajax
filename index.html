@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CRUD Operations</title>
+  <title>Fetch and Display Data</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,20 +12,9 @@
     h1 {
       text-align: center;
     }
-    .crud-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    input[type="text"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 70%;
-      margin-right: 10px;
-    }
     button {
+      display: block;
+      margin: 20px auto;
       padding: 10px 20px;
       font-size: 16px;
       color: #fff;
@@ -37,110 +26,84 @@
     button:hover {
       background-color: #0056b3;
     }
-    .data-table {
-      width: 100%;
+    table {
+      margin: 20px auto;
       border-collapse: collapse;
+      width: 80%;
     }
-    .data-table th, .data-table td {
+    th, td {
       border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
     }
-    .data-table th {
+    th {
       background-color: #007BFF;
       color: white;
     }
-    .actions button {
-      background-color: #28a745;
-      margin: 0 5px;
-    }
-    .actions button.delete {
-      background-color: #dc3545;
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-  <h1>CRUD Operations</h1>
-  <div class="crud-container">
-    <!-- Form to Add/Edit Items -->
-    <form id="crudForm">
-      <input type="text" id="itemInput" placeholder="Enter item name" required />
-      <button type="submit" id="addButton">Add</button>
-    </form>
-
-    <!-- Table to Display Items -->
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Item</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="dataBody"></tbody>
-    </table>
-  </div>
+  <h1>Fetch Data Example</h1>
+  <button id="fetchButton">Fetch Data</button>
+  <div id="error" class="error"></div>
+  <table id="dataTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+    <tbody id="dataBody"></tbody>
+  </table>
 
   <script>
-    let items = [];
-    let editIndex = -1;
+    document.getElementById('fetchButton').addEventListener('click', fetchData);
 
-    const form = document.getElementById('crudForm');
-    const itemInput = document.getElementById('itemInput');
-    const dataBody = document.getElementById('dataBody');
+    function fetchData() {
+      const url = 'https://jsonplaceholder.typicode.com/users'; // Mock public API URL
 
-    // Handle form submission
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const itemName = itemInput.value.trim();
+      // Make an AJAX request using Fetch API
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          return response.json(); // Parse JSON response
+        })
+        .then(data => {
+          displayData(data); // Call function to display data
+          document.getElementById('error').textContent = ''; // Clear error messages
+        })
+        .catch(error => {
+          document.getElementById('error').textContent = `Failed to fetch data: ${error.message}`;
+        });
+    }
 
-      if (editIndex === -1) {
-        // Add new item
-        const newItem = { id: items.length + 1, name: itemName };
-        items.push(newItem);
-      } else {
-        // Update existing item
-        items[editIndex].name = itemName;
-        editIndex = -1;
-      }
+    function displayData(data) {
+      const tableBody = document.getElementById('dataBody');
+      tableBody.innerHTML = ''; // Clear any previous data
 
-      itemInput.value = '';
-      document.getElementById('addButton').textContent = 'Add';
-      renderTable();
-    });
-
-    // Render the table
-    function renderTable() {
-      dataBody.innerHTML = '';
-      items.forEach((item, index) => {
+      data.forEach(user => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${item.id}</td>
-          <td>${item.name}</td>
-          <td class="actions">
-            <button onclick="editItem(${index})">Edit</button>
-            <button class="delete" onclick="deleteItem(${index})">Delete</button>
-          </td>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.phone}</td>
         `;
-        dataBody.appendChild(row);
+        tableBody.appendChild(row);
       });
-    }
 
-    // Edit an item
-    function editItem(index) {
-      itemInput.value = items[index].name;
-      editIndex = index;
-      document.getElementById('addButton').textContent = 'Update';
+      document.getElementById('dataTable').style.display = 'table'; // Show the table
     }
-
-    // Delete an item
-    function deleteItem(index) {
-      items.splice(index, 1);
-      renderTable();
-    }
-
-    renderTable();
   </script>
 
 </body>
