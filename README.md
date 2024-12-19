@@ -12,10 +12,6 @@ This project demonstrates a basic **User Management System** using vanilla JavaS
 - Delete users.
 - Responsive and clean table design for displaying user information.
 
-## Live Demo
-
-[Visit Live Site](https://samayun.github.io/ajax/)
-
 ## Algorithm of CRUD Code
 
 ### **Fetch Data (Read Operation)**
