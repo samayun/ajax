@@ -87,8 +87,7 @@
 
     function displayData(data) {
       const tableBody = document.getElementById('dataBody');
-      tableBody.innerHTML = ''; // Clear any previous data
-
+      tableBody.innerHTML = '';
       data.forEach(user => {
         const row = document.createElement('tr');
         row.innerHTML = `
