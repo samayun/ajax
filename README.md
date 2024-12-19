@@ -2,8 +2,6 @@
 Site url: https://samayun.github.io/ajax
 
 
-# User Management with CRUD Operations
-
 This project demonstrates a basic **User Management System** using vanilla JavaScript, HTML, and CSS. It allows you to perform CRUD operations (Create, Read, Update, Delete) dynamically and fetch mock data from an API.
 
 ## Features
